@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Payments | Ride Management System</title>
+
+  <!-- ✅ Link to your animated global stylesheet -->
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+
+  <!-- Bootstrap (optional for layout) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">RideManager</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/users">Riders</a></li>
+        <li class="nav-item"><a class="nav-link" href="/drivers">Drivers</a></li>
+        <li class="nav-item"><a class="nav-link" href="/rides">Rides</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/payments">Payments</a></li>
+        <li class="nav-item"><a class="nav-link" href="/ratings">Ratings</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5 text-center">
+  <h2 class="text-light mb-4">Payments</h2>
+
+  <!-- ✅ Success Alert -->
+  <div id="paymentSuccessAlert" class="alert alert-success" style="display:none;">
+    ✅ Payment added successfully!
+  </div>
+
+  <!-- ✅ Payment Form -->
+  <form id="paymentForm" class="bg-light p-4 rounded shadow-lg" style="max-width:650px; margin:auto; opacity:0.95;">
+    <div class="row g-2">
+      <div class="col-md-3">
+        <input type="number" id="rideId" class="form-control" placeholder="Ride ID" required>
+      </div>
+      <div class="col-md-3">
+        <input type="number" step="0.01" id="amount" class="form-control" placeholder="Amount" required>
+      </div>
+      <div class="col-md-3">
+        <select id="paymentMethod" class="form-select" required>
+          <option value="" disabled selected>Method</option>
+          <option>Cash</option>
+          <option>Card</option>
+          <option>Wallet</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <!-- ✅ Animated button -->
+        <button type="submit" class="btn btn-success w-100 fw-bold">💸 Add Payment</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- ✅ Payments Table -->
+  <table class="table table-striped table-bordered mt-4 bg-white bg-opacity-75 rounded shadow-lg">
+    <thead class="table-success text-center">
+    <tr>
+      <th>Payment ID</th>
+      <th>Ride ID</th>
+      <th>Amount</th>
+      <th>Method</th>
+      <th>Status</th>
+      <th>Date</th>
+    </tr>
+    </thead>
+    <tbody id="paymentsTableBody" class="text-center">
+    <tr th:each="payment : ${payments}">
+      <td th:text="${payment.paymentId}"></td>
+      <td th:text="${payment.rideId}"></td>
+      <td th:text="${payment.amount}"></td>
+      <td th:text="${payment.paymentMethod}"></td>
+      <td th:text="${payment.status}"></td>
+      <td th:text="${payment.paymentDate}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ JavaScript -->
+<script>
+  const paymentForm = document.getElementById('paymentForm');
+  const paymentAlert = document.getElementById('paymentSuccessAlert');
+  const paymentsTableBody = document.getElementById('paymentsTableBody');
+
+  paymentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payment = {
+      rideId: document.getElementById('rideId').value,
+      amount: document.getElementById('amount').value,
+      paymentMethod: document.getElementById('paymentMethod').value,
+      status: "Paid"
+    };
+
+    try {
+      const res = await fetch('/api/payments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payment)
+      });
+
+      if (!res.ok) throw new Error('Failed to add payment');
+      const newPayment = await res.json();
+
+      // ✅ Show success alert
+      paymentAlert.style.display = 'block';
+      setTimeout(() => paymentAlert.style.display = 'none', 3000);
+
+      paymentForm.reset();
+
+      // ✅ Append to table
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${newPayment.paymentId}</td>
+        <td>${newPayment.rideId}</td>
+        <td>${newPayment.amount}</td>
+        <td>${newPayment.paymentMethod}</td>
+        <td>${newPayment.status}</td>
+        <td>${newPayment.paymentDate}</td>
+      `;
+      paymentsTableBody.appendChild(newRow);
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+</script>
+
+</body>
+</html>

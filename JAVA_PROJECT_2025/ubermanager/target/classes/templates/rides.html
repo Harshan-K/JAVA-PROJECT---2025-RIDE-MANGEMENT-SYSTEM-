@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rides</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Rides</h2>
+
+    <!-- Success Popup -->
+    <div id="rideSuccessAlert" class="alert alert-success" style="display:none;">
+        Ride requested successfully!
+    </div>
+
+    <!-- Request Ride Form -->
+    <form id="rideForm" class="mb-4">
+        <div class="row">
+            <div class="col-md-3 mb-2">
+                <input type="number" id="userId" class="form-control" placeholder="Rider ID" required>
+            </div>
+            <div class="col-md-3 mb-2">
+                <input type="text" id="pickupLocation" class="form-control" placeholder="Pickup" required>
+            </div>
+            <div class="col-md-3 mb-2">
+                <input type="text" id="dropLocation" class="form-control" placeholder="Drop" required>
+            </div>
+            <div class="col-md-3 mb-2">
+                <button type="submit" class="btn btn-success w-100">Request Ride</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Rides Table -->
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Driver</th>
+            <th>Pickup</th>
+            <th>Drop</th>
+            <th>Fare</th>
+            <th>Status</th>
+            <th>Request Time</th>
+        </tr>
+        </thead>
+        <tbody id="ridesTableBody">
+        <tr th:each="ride : ${rides}">
+            <td th:text="${ride.rideId}"></td>
+            <td th:text="${ride.user.name}"></td>
+            <td th:text="${ride.driver != null ? ride.driver.name : 'Pending'}"></td>
+            <td th:text="${ride.pickupLocation}"></td>
+            <td th:text="${ride.dropLocation}"></td>
+            <td th:text="${ride.fare != null ? ride.fare : '-'}"></td>
+            <td th:text="${ride.status}"></td>
+            <td th:text="${ride.requestTime}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const rideForm = document.getElementById('rideForm');
+    const rideAlert = document.getElementById('rideSuccessAlert');
+    const ridesTableBody = document.getElementById('ridesTableBody');
+
+    rideForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const ride = {
+            userId: document.getElementById('userId').value,
+            pickupLocation: document.getElementById('pickupLocation').value,
+            dropLocation: document.getElementById('dropLocation').value
+        };
+
+        try {
+            const res = await fetch('/api/rides', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ride)
+            });
+
+            if (!res.ok) throw new Error('Failed to request ride');
+            const newRide = await res.json();
+
+            // Show popup
+            rideAlert.style.display = 'block';
+            setTimeout(() => rideAlert.style.display = 'none', 3000);
+            rideForm.reset();
+
+            // Append new row
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${newRide.rideId}</td>
+                <td>${newRide.user?.name || '-'}</td>
+                <td>${newRide.driver?.name || 'Pending'}</td>
+                <td>${newRide.pickupLocation}</td>
+                <td>${newRide.dropLocation}</td>
+                <td>${newRide.fare || '-'}</td>
+                <td>${newRide.status}</td>
+                <td>${newRide.requestTime}</td>
+            `;
+            ridesTableBody.appendChild(newRow);
+        } catch (err) {
+            alert(err.message);
+        }
+    });
+</script>
+</body>
+</html>

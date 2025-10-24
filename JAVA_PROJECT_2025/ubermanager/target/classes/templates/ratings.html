@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Ratings</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Driver Ratings</h2>
+
+  <!-- Success Popup -->
+  <div id="ratingSuccessAlert" class="alert alert-success" style="display:none;">
+    Rating submitted successfully!
+  </div>
+
+  <!-- Add Rating Form -->
+  <form id="ratingForm" th:action="@{/api/ratings}" method="post" class="mb-4">
+    <div class="row g-2">
+      <div class="col-md-2">
+        <input type="number" name="rideId" class="form-control" placeholder="Ride ID" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" name="userId" class="form-control" placeholder="Rider ID" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" name="driverId" class="form-control" placeholder="Driver ID" required>
+      </div>
+      <div class="col-md-2">
+        <select name="rating" class="form-select" required>
+          <option value="" disabled selected>Rating</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="review" class="form-control" placeholder="Optional review">
+      </div>
+    </div>
+    <div class="mt-2">
+      <button type="submit" class="btn btn-success">Submit Rating</button>
+    </div>
+  </form>
+
+  <!-- Ratings Table -->
+  <table class="table table-striped mt-3">
+    <thead>
+    <tr>
+      <th>Rating ID</th>
+      <th>Ride ID</th>
+      <th>Rider</th>
+      <th>Driver</th>
+      <th>Rating</th>
+      <th>Review</th>
+      <th>Date</th>
+    </tr>
+    </thead>
+    <tbody id="ratingsTableBody">
+    <tr th:each="rating : ${ratings}">
+      <td th:text="${rating.ratingId}"></td>
+      <td th:text="${rating.ride.rideId}"></td>
+      <td th:text="${rating.user.name}"></td>
+      <td th:text="${rating.driver.name}"></td>
+      <td th:text="${rating.rating}"></td>
+      <td th:text="${rating.review != null ? rating.review : '-'}"></td>
+      <td th:text="${rating.ratingDate}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const ratingForm = document.getElementById('ratingForm');
+  const ratingAlert = document.getElementById('ratingSuccessAlert');
+  const ratingsTableBody = document.getElementById('ratingsTableBody');
+
+  ratingForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // prevent normal form submission
+
+      const formData = new FormData(ratingForm);
+      const params = new URLSearchParams(formData);
+
+      try {
+          const response = await fetch('/api/ratings', {
+              method: 'POST',
+              body: params
+          });
+
+          if (!response.ok) throw new Error('Failed to submit rating');
+
+          const newRating = await response.json();
+
+          // Show popup
+          ratingAlert.style.display = 'block';
+          setTimeout(() => ratingAlert.style.display = 'none', 3000);
+
+          // Reset form
+          ratingForm.reset();
+
+          // Append new row to table
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+              <td>${newRating.ratingId}</td>
+              <td>${newRating.ride?.rideId || '-'}</td>
+              <td>${newRating.user?.name || '-'}</td>
+              <td>${newRating.driver?.name || '-'}</td>
+              <td>${newRating.rating}</td>
+              <td>${newRating.review || '-'}</td>
+              <td>${newRating.ratingDate}</td>
+          `;
+          ratingsTableBody.appendChild(newRow);
+
+      } catch (err) {
+          alert(err.message);
+      }
+  });
+</script>
+
+</body>
+</html>

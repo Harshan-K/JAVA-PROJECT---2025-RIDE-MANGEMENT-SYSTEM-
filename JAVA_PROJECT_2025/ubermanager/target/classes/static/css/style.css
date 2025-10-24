@@ -1,0 +1,235 @@
+/* ================= Body ================= */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('/images/logo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+}
+
+/* ================= Navbar ================= */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #fff !important;
+}
+
+/* ================= Buttons ================= */
+.btn-primary {
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #16a085;
+    border-color: #16a085;
+    transform: scale(1.05);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    transform: scale(1.05);
+}
+
+/* ================= Forms ================= */
+input, select {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #1abc9c;
+    box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+}
+
+/* ================= Tables ================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #1abc9c;
+    color: white;
+}
+
+tr:hover {
+    background-color: rgba(26, 188, 156, 0.1);
+}
+
+/* ================= Hero Section ================= */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100vh;
+    padding: 50px;
+    background: rgba(0,0,0,0.4); /* overlay for text readability */
+}
+
+.hero-text {
+    max-width: 500px;
+    color: white;
+    animation: fadeInLeft 1s ease forwards;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+/* ================= Phone Animation ================= */
+.hero-phone {
+    position: relative;
+    width: 250px;
+    height: 500px;
+    animation: floatPhone 2.5s ease-in-out infinite alternate;
+}
+
+.phone-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 40px;
+    border: 12px solid #fff;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    background-color: #000;
+    position: relative;
+}
+
+.phone-screen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Floating Animation */
+@keyframes floatPhone {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px) rotate(-2deg); }
+    100% { transform: translateY(0px) rotate(2deg); }
+}
+
+/* Fade-in Hero Text */
+@keyframes fadeInLeft {
+    0% { opacity: 0; transform: translateX(-50px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ================= Responsive ================= */
+@media screen and (max-width: 900px) {
+    .hero {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        height: auto;
+        padding: 50px 20px;
+    }
+
+    .hero-phone {
+        margin-top: 30px;
+        width: 200px;
+        height: 400px;
+    }
+
+    .hero-text h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-text p {
+        font-size: 1rem;
+    }
+
+    input, select {
+        width: 100%;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+/* ================= Extra Animations ================= */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.btn-primary, .btn-success {
+    animation: pulse 3s infinite;
+}
+
+/* ================= Phone Screen ================= */
+.phone-screen {
+    width: 100%;                  /* full width of phone frame */
+    height: 100%;                 /* full height of phone frame */
+    border-radius: 30px;          /* rounded corners inside phone */
+    background-image: url('/images/map-screenshot.png'); /* path to your map image */
+    background-size: cover;       /* cover the phone screen completely */
+    background-position: center;  /* center the image */
+    background-repeat: no-repeat; /* prevent tiling */
+    display: block;
+    overflow: hidden;
+
+    /* Optional: subtle shadow inside phone screen */
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+}
+
+/* Floating animation for the phone */
+.hero-phone {
+    position: relative;
+    width: 250px;
+    height: 500px;
+    animation: floatPhone 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes floatPhone {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px) rotate(-2deg); }
+    100% { transform: translateY(0px) rotate(2deg); }
+}
+
+/* Optional responsive resizing */
+@media screen and (max-width: 900px) {
+    .hero-phone {
+        width: 200px;
+        height: 400px;
+    }
+}
